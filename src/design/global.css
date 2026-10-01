@@ -1,0 +1,221 @@
+/* ============================================================
+   Pola — style globalne
+   Tokeny żyją w design/tokens.ts; tutaj są ich lustrzane kopie
+   jako zmienne CSS, bo media queries i pseudoklasy nie dosięgną
+   stylów inline. Zmieniasz kolor? Zmień w OBU miejscach.
+   ============================================================ */
+:root {
+  --paper: #F5EFE6;
+  --sand: #EDE5D6;
+  --cream: #FAF6EE;
+  --ink: #2C2620;
+  --ink-soft: #5A4F42;
+  --faded: #756857;
+  --faded-deco: #8B7E6E;
+  --line: #E0D7C5;
+  --line-soft: #EBE2D0;
+  --moss: #3F5C3A;
+  --mustard: #C9974A;
+  --mustard-t: #8A6329;
+  --rust: #8B3D1F;
+
+  --nav-h: 72px;
+  --sidebar-w: 236px;
+  --content-max: 760px;
+  --gutter: 16px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body, #root { height: 100%; }
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.serif {
+  font-family: 'Fraunces', 'Times New Roman', serif;
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 30, "WONK" 0;
+  letter-spacing: -0.01em;
+}
+.serif-display {
+  font-family: 'Fraunces', serif;
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 50, "WONK" 1;
+  letter-spacing: -0.025em;
+  line-height: 1.02;
+}
+
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+input, textarea, select { font-family: inherit; }
+a { color: inherit; }
+img { display: block; max-width: 100%; }
+
+/* --- dostępność --- */
+button:focus-visible, input:focus-visible, textarea:focus-visible,
+a:focus-visible, [tabindex]:focus-visible {
+  outline: 2.5px solid var(--mustard);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+input:focus, textarea:focus { border-color: var(--mustard-t) !important; }
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+.skip-link {
+  position: absolute; top: -60px; left: 12px; z-index: 500;
+  background: var(--ink); color: var(--cream);
+  padding: 12px 18px; border-radius: 10px; font-size: 14px; font-weight: 600;
+  text-decoration: none;
+}
+.skip-link:focus { top: 12px; }
+
+/* ============================================================
+   SZKIELET APLIKACJI
+   mobile: treść + dolna nawigacja
+   desktop (>=1024px): boczna nawigacja + kolumna treści
+   ============================================================ */
+.app { min-height: 100%; display: flex; flex-direction: column; }
+
+.app-main {
+  flex: 1;
+  padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px) + 16px);
+}
+
+.container {
+  width: 100%;
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding-left: var(--gutter);
+  padding-right: var(--gutter);
+}
+.container--wide { max-width: 1180px; }
+.container--narrow { max-width: 560px; }
+
+/* --- nawigacja: dół na mobile --- */
+.nav {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 80;
+  padding-top: 10px;
+  padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+  background: linear-gradient(180deg, rgba(245,239,230,0) 0%, rgba(245,239,230,0.94) 26%, var(--paper) 55%);
+}
+.nav-items { display: grid; grid-template-columns: repeat(4, 1fr); max-width: 560px; margin: 0 auto; padding: 0 8px; }
+.nav-item {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 6px 0; min-height: 44px; position: relative;
+  color: var(--faded); font-size: 10.5px; font-weight: 500;
+}
+.nav-item[aria-current="page"] { color: var(--ink); font-weight: 600; }
+.nav-brand { display: none; }
+
+@media (min-width: 1024px) {
+  .app { flex-direction: row; }
+  .app-main { padding-bottom: 48px; margin-left: var(--sidebar-w); min-width: 0; }
+
+  .nav {
+    position: fixed; top: 0; left: 0; bottom: 0; right: auto;
+    width: var(--sidebar-w);
+    padding: 28px 16px;
+    background: var(--cream);
+    border-right: 1px solid var(--line-soft);
+    display: flex; flex-direction: column; gap: 28px;
+  }
+  .nav-brand {
+    display: block;
+    font-family: 'Fraunces', serif;
+    font-variation-settings: "opsz" 96, "wght" 350;
+    font-size: 27px; letter-spacing: -0.03em;
+    padding-left: 12px; color: var(--ink);
+  }
+  .nav-items { display: flex; flex-direction: column; gap: 4px; max-width: none; padding: 0; }
+  .nav-item {
+    flex-direction: row; justify-content: flex-start; gap: 13px;
+    padding: 12px 13px; border-radius: 12px; font-size: 14.5px;
+  }
+  .nav-item[aria-current="page"] { background: var(--sand); }
+  .nav-dot { display: none; }
+}
+
+/* --- Odkrywaj: mapa nad listą na mobile, obok listy na desktopie --- */
+.discover-split { display: block; }
+.discover-map {
+  height: 320px; border-radius: 22px; overflow: hidden;
+  background: var(--sand); box-shadow: inset 0 0 0 1px var(--line);
+  position: relative;
+}
+@media (min-width: 768px) { .discover-map { height: 400px; } }
+@media (min-width: 1024px) {
+  .discover-split {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(360px, 460px);
+    gap: 28px;
+    align-items: start;
+  }
+  .discover-map { height: calc(100vh - 210px); position: sticky; top: 28px; }
+  .discover-list { min-width: 0; }
+}
+
+/* --- siatki --- */
+.grid-products { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (min-width: 640px) { .grid-products { grid-template-columns: repeat(3, 1fr); gap: 14px; } }
+@media (min-width: 1024px) { .grid-products { grid-template-columns: repeat(4, 1fr); } }
+
+.form-grid { display: grid; grid-template-columns: 1fr; gap: 0 16px; }
+@media (min-width: 768px) { .form-grid--2 { grid-template-columns: 1fr 1fr; } }
+
+/* --- paski CTA przyklejone do dołu --- */
+.sticky-bar {
+  position: sticky; bottom: calc(var(--nav-h) + 8px); z-index: 60;
+}
+.sticky-bar--bare { position: sticky; bottom: 0; z-index: 70; }
+@media (min-width: 1024px) {
+  .sticky-bar { bottom: 24px; }
+}
+
+/* --- animacje --- */
+@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+@keyframes toastIn { from { opacity: 0; transform: translateY(14px) scale(0.96); } to { opacity: 1; transform: none; } }
+@keyframes sheetIn { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+.screen-enter { animation: fadeIn 0.22s ease-out; }
+.toast { animation: toastIn 0.22s cubic-bezier(.2,.9,.3,1.2); }
+.sheet { animation: sheetIn 0.22s cubic-bezier(.2,.9,.3,1); }
+.spinner { animation: spin 0.9s linear infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  html { scroll-behavior: auto; }
+}
+
+/* --- toasty --- */
+.toast-stack {
+  position: fixed; left: 16px; right: 16px; z-index: 200;
+  bottom: calc(var(--nav-h) + 16px);
+  display: flex; flex-direction: column; gap: 8px;
+  pointer-events: none;
+  max-width: 520px; margin: 0 auto;
+}
+@media (min-width: 1024px) {
+  .toast-stack { left: calc(var(--sidebar-w) + 24px); right: auto; bottom: 24px; width: 420px; }
+}
+
+.clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* Rząd chipów: przewija się na wąskim ekranie, zawija na szerokim. */
+.chip-row { display: flex; gap: 6px; overflow-x: auto; }
+@media (min-width: 1024px) {
+  .chip-row { flex-wrap: wrap; overflow-x: visible; }
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
+
+/* Google Maps — chowamy natywny chrom, który gryzie się z layoutem */
+.gm-style-cc { display: none; }
+.gm-style .gm-style-iw-c { border-radius: 14px; font-family: 'Inter', sans-serif; }
